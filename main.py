@@ -307,6 +307,7 @@ moblist = ["goblin", "mossy golem", "goblin brute", "drunk barbarian", "voodoo g
            "magitek dreadnaught"]
 fortressloot1to20 = ["tattered treasure map", "mysterious scroll", "gold", "silver", "wine bottle", "old sack",
                      "rusty nail", "mossy key", "aetherial lodestone"]
+religiousmonumentloot1to20 = ["Holy Scroll", "Key of the Banished", "Doctrine of Souls", "Fractured Rune", "Mythril Gemstone", "Bottle of Elixir"]
 
 mobs = [
 
