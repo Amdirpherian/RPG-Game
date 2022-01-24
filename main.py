@@ -9,17 +9,17 @@ from itertools import accumulate
 
 print("Welcome to Korum'Dah!")
 
-
 # Set up base classes
 class Player:
-    def __init__(self, name: str, gender: str, race: str, hp: float, atk: float, critchance: float, critdmg: float,
+    def __init__(self, name: str, gender: str, race: str, hp: float, matk: float, critchance: float, critdmg: float,
                  defense: float, helmet: str, chestplate: str, leggings: str, boots: str, ring: str, weapon: str,
-                 evasion: float, inventory, goldcoins: int, pclass: str, totalxp: float, level: int):
+                 evasion: float, inventory, goldcoins: int, pclass: str, totalxp: float, level: int, mana: float,
+                 patk: float):
         self.name = name
         self.gender = gender
         self.race = race
         self.hp = hp
-        self.atk = atk
+        self.matk = matk
         self.critchance = critchance
         self.critdmg = critdmg
         self.defense = defense
@@ -35,9 +35,16 @@ class Player:
         self.pclass = pclass
         self.totalxp = totalxp
         self.level = level
+        self.mana = mana
+        self.patk = patk
 
     def duel(self, enemy: str, pclass: str):
-        pass
+        print(f"You are now in a battle with a {enemy}")
+
+        turnSelf, duelActive, turnCount = True, True, 1
+
+        if (player.pclass == "warlock"):
+            pass
 
     def gear_menu(self):
         print(f"""
@@ -46,7 +53,7 @@ class Player:
         leggings: {player.leggings}
         boots: {player.boots}
         ring: {player.ring}
-        
+
         """)
 
         gValid = False
@@ -55,7 +62,7 @@ class Player:
             gprompt = input("""
             What would you like to do?
             \'equip\' to equip some gear
-            \'exit\' to exit""")
+            \'exit\' to exit\n""")
 
             if (gprompt.lower().strip() == "exit"):
                 return None
@@ -66,8 +73,6 @@ class Player:
                     eprompt = input("What gear would you like to equip?")
 
                     # equip gear here from json
-
-
 
     def xp_menu(self, xpearned: int):
         self.totalxp += xpearned
@@ -83,42 +88,62 @@ class Player:
     def treasure(self, location: str):
         if (location == "fortress"):
             if (self.level <= 20):
-                fortresslootobtained1to20 = random.choices(fortressloot1to20, weights=(10, 20, 5, 30, 40, 35, 36, 30, 1), k=1)
+                fortresslootobtained1to20 = random.choices(fortressloot1to20,
+                                                           weights=(10, 20, 5, 30, 40, 35, 36, 30, 1), k=1)
                 print(f"You found {fortresslootobtained1to20}.")
                 alreadyCounted = False  # check if metal was already counted and added to inventory
                 for loot in fortresslootobtained1to20:
                     if (player.inventory.get(loot) == None):
-                        player.inventory[loot] = minemetals.count(loot)
+                        player.inventory[loot] = fortresslootobtained1to20.count(loot)
                         alreadyCounted = True
                     elif (alreadyCounted == False):
-                        player.inventory[loot] += minemetals.count(loot)
+                        player.inventory[loot] += fortresslootobtained1to20.count(loot)
                         alreadyCounted = True
 
 
         elif (location == "religious monument"):
             if (self.level <= 20):
-                religiousmonumentlootobtained1to20 = random.choices()
+                religiousmonumentlootobtained1to20 = random.choices(religiousmonumentloot1to20,
+                                                                    weights=(100, 1, 2, 10, 2, 10, 50, 40, 40, 20), k=1)
+                print(f"You found {religiousmonumentlootobtained1to20}.")
+                alreadyCounted = False  # check if metal was already counted and added to inventory
+                for loot in religiousmonumentlootobtained1to20:
+                    if (player.inventory.get(loot) == None):
+                        player.inventory[loot] = religiousmonumentlootobtained1to20.count(loot)
+                        alreadyCounted = True
+                    elif (alreadyCounted == False):
+                        player.inventory[loot] += religiousmonumentlootobtained1to20.count(loot)
+                        alreadyCounted = True
 
 
 class Weapon:
-    def __init__(self, wtype: str, dmg: float):
+    def __init__(self, name: str, description: str, wtype: str, dmg: float, evasion: float, matk: float, patk: float,
+                 defense: double):
+        self.name = name
+        self.description = description
         self.wtype = wtype
         self.dmg = dmg
+        self.evasion = evasion
+        self.matk = matk
+        self.patk = patk
+        self.defense = defense
+
 
 
 class Enemy:
-    def __init__(self, race: str, hp: float, atk: float, defense: float, weapon: str):
-        self.race = race
+    def __init__(self, name: str, hp: float, atk: float, defense: float, weapon: str):
+        self.name = name
         self.hp = hp
         self.atk = atk
         self.defense = defense
         self.weapon = weapon
 
 
+
 racev, genderv, classv = False, False, False
 
 player = Player(None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, {}, 0, None,
-                0, 0)
+                0, 0, 0)
 
 name = input("What is your name? ")
 player.name = name
@@ -140,11 +165,13 @@ while (racev == False):
     if (racev.lower().strip() == "human"):
         player.race = "human"
         player.hp = 100
-        player.atk = 10
+        player.matk = 10
+        player.patk = 10
         player.defense = 10
         player.critchance = 0.05
         player.critdmg = 1.5
         player.evasion = 0.05
+        player.mana = 100
 
     elif (racev.lower().strip() == "orc"):
         player.race = "orc"
@@ -154,6 +181,7 @@ while (racev == False):
         player.critchance = 0.04
         player.critdmg = 1.75
         player.evasion = 0.03
+        player.mana = 115
 
     elif (racev.lower().strip() == "elf"):
         player.race = "elf"
@@ -163,6 +191,7 @@ while (racev == False):
         player.critchance = 0.1
         player.critdmg = 2
         player.evasion = 0.15
+        player.mana = 105
 
     elif (racev.lower().strip() == "werewolf"):
         player.race = "werewolf"
@@ -172,6 +201,7 @@ while (racev == False):
         player.critchance = 0.06
         player.critdmg = 1.4
         player.evasion = 0.12
+        player.mana = 90
 
     elif (racev.lower().strip() == "dragunius"):
         player.race = "dragunius"
@@ -181,6 +211,7 @@ while (racev == False):
         player.critchance = 0.02
         player.critdmg = 0.03
         player.evasion = 0.04
+        player.mana = 110
     else:
         racev = False
 
@@ -208,6 +239,7 @@ while (classv == False):
         player.critchance += 0.02
         player.critdmg += 0.3
         player.evasion += 0.02
+        player.mana += 10
         print("You chose the Warlock class!")
         player.pclass = "human"
 
@@ -218,6 +250,7 @@ while (classv == False):
         player.critchance += 0.03
         player.critdmg += 0.35
         player.evasion += 0.03
+        player.mana += 30
         print("You chose the Mage class!")
         player.pclass = "human"
 
@@ -228,6 +261,7 @@ while (classv == False):
         player.critchance += 0.01
         player.critdmg += 0.2
         player.evasion += 0.01
+        player.mana -= 5
         print("You chose the Warrior class!")
         player.pclass = "human"
 
@@ -238,6 +272,7 @@ while (classv == False):
         player.critchance += 0
         player.critdmg += 0.01
         player.evasion += 0.01
+        player.mana -= 10
         print("You chose the Paladin class!")
         player.pclass = "human"
 
@@ -248,6 +283,7 @@ while (classv == False):
         player.critchance += 0.01
         player.critdmg += 0.2
         player.evasion += 0.01
+        player.mana += 3
         print("You chose the Vampire class!")
         player.pclass = "human"
 
@@ -258,6 +294,7 @@ while (classv == False):
         player.critchance += 0.2
         player.critdmg += 0.4
         player.evasion += 0.1
+        player.mana -= 5
         print("You chose the Rogue class!")
         player.pclass = "human"
 
@@ -268,6 +305,7 @@ while (classv == False):
         player.critchance += 0.02
         player.critdmg += 0.01
         player.evasion += 0
+        player.mana += 10
         print("You chose the Shaman class!")
         player.pclass = "human"
 
@@ -278,6 +316,7 @@ while (classv == False):
         player.critchance += 0.15
         player.critdmg += 0.50
         player.evasion += 0.02
+        player.mana += 5
         print("You chose the Executioner class!")
         player.pclass = "human"
 
@@ -288,13 +327,14 @@ while (classv == False):
         player.critchance += 0.03
         player.critdmg += 0.25
         player.evasion += 0.04
+        player.mana += 2
         print("You chose the Berserker class!")
         player.pclass = "human"
     else:
         classv = False
 
-# define resources and resource gathering
 
+# define resources and resource gathering
 
 logging = ["oak", "spruce", "acacia", "dark oak", "ash", "cedar", "beech", "pine", "maple", "mystical"]
 mining = ["gold", "copper", "diamond", "mythril", "quartz", "jade", "silver", "emerald", "amber", "iron", "stone"]
@@ -305,9 +345,11 @@ moblist = ["goblin", "mossy golem", "goblin brute", "drunk barbarian", "voodoo g
            "dulgarim", "cursedgaze", "7th Bastion death claw",
            "magibolt armor", "megalotragus", "funa yurei", "gravekeeper", "magata kifusa", "onmitsu",
            "magitek dreadnaught"]
-fortressloot1to20 = ["tattered treasure map", "mysterious scroll", "gold", "silver", "wine bottle", "old sack",
+fortressloot1to20 = ["Tattered Treasure Map", "Mysterious scroll", "Gold", "Silver", "wine bottle", "old sack",
                      "rusty nail", "mossy key", "aetherial lodestone"]
-religiousmonumentloot1to20 = ["Holy Scroll", "Key of the Banished", "Doctrine of Souls", "Fractured Rune", "Mythril Gemstone", "Bottle of Elixir"]
+religiousmonumentloot1to20 = ["Holy Scroll", "Key of the Banished", "Doctrine of Souls", "Fractured Rune", "Mythril Gemstone", "Bottle of Elixir", "Burnt-out Candle", "old sack", "glass shard"
+                              , "Flickering Lantern"]
+
 
 mobs = [
 
@@ -359,17 +401,17 @@ mobs = [
 
 weapons1to20 = [
 
-    {
-        "name": "Wooden Sword",
-        "description": "A weak and shabby sword. Barely does any damage.",
-        "type": "sword",
-        "atk": 1,
-        "critchance": 0,
-        "critdmg": 0,
-        "defense": 0,
-        "evasion": 0,
-        "droprate":40,
-    },
+{
+    "name": "Wooden Sword",
+    "description": "A weak and shabby sword. Barely does any damage.",
+    "type": "sword",
+    "atk": 1,
+    "critchance": 0,
+    "critdmg": 0,
+    "defense": 0,
+    "evasion": 0,
+    "droprate":40,
+},
 
 {
     "name": "Blunt Club",
@@ -387,7 +429,7 @@ weapons1to20 = [
     "name": "Novice Staff",
     "description": "A simple magic staff for novices. Can only cast basic spells. Made of magical wood.",
     "type": "staff",
-    "atk": "2",
+    "atk": 2,
     "critchance": 0,
     "critdmg": 0.1,
     "defense": 0,
@@ -495,12 +537,12 @@ weapons1to20 = [
     "name": "Fine Saber of Forgotten Souls",
     "description": "A long saber that holds desparate solds inside it. You can almost hear them wailing if all is quiet.",
     "type": "Sword",
-    "atk":11.3,
+    "atk": 11.3,
     "critchance": 0.05,
     "critdmg": 0.3,
     "defense": 0,
     "evasion": 0,
-"   droprate":3,
+    "droprate": 3,
 },
 
 {
@@ -647,7 +689,7 @@ def explore():
     print("You venture out to explore the wild.\n...")
     time.sleep(r.randint(5, 10))
 
-    foundstruct = 1
+    foundstruct = r.randint(1,10)
 
     match foundstruct:
 
@@ -728,12 +770,23 @@ Are you daring enough to venture inside? (yes/no) """)
                     case 3:
                         print("You carefully step into the center of the monument. The runes on it look mysterious.")
                     case 4:
-                        print("")
+                        print("You venture into the monument. The stones on the ground are cracked.")
                     case 5:
-                        print("")
+                        print("You venture into the monument. A floating stone is visible in the center, emitting a purple light.")
 
                 # add mobencounter stuffs
                 mobortreasuremonument = r.randint(1,3)
+
+                match mobtreasuremonument:
+                    case 1:
+                        print("You encountered a mob while exploring!")
+                    case 2:
+                        print("You hear a shriek from the shadows and see a hideous beast appear in front of you.")
+
+                    case 3:
+                        print("You find a treasure chest!")
+                        treasure("religiousmonument")
+
 
             else:
                 print("You left the monument.")
@@ -755,6 +808,7 @@ def profile():
     Class: {player.pclass}
     Attack: {player.atk}
     Health: {player.hp}
+    Mana: {player.mana}
     Defense: {player.defense}
     Crit Chance: {player.critchance*100}%
     Crit Damage: {player.critdmg+100}%
